@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>UPI Payment Portal</title>
+  <link rel="icon" type="image/png" href="favicon.png" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <style>
+    :root {
+      --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      --accent-color: #764ba2;
+      --card-bg: rgba(255, 255, 255, 0.98);
+      --text-dark: #2d3748;
+      --text-muted: #718096;
+      --success-color: #48bb78;
+      --warning-color: #ed8936;
+      --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 8px 25px rgba(0, 0, 0, 0.1);
+      --shadow-lg: 0 15px 35px rgba(0, 0, 0, 0.15);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      color: var(--text-dark);
+      padding: 20px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1100px;
+      padding: 24px;
+      text-align: center;
+    }
+
+    .logo-section {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 15px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .logo-icon {
+      background: var(--primary-gradient);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      font-size: clamp(28px, 3vw, 36px);
+    }
+
+    h1 {
+      font-size: clamp(24px, 4vw, 36px);
+      margin-bottom: 10px;
+      font-weight: 700;
+      background: var(--primary-gradient);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      line-height: 1.3;
+    }
+
+    .subtitle {
+      font-size: clamp(14px, 1.8vw, 18px);
+      color: var(--text-muted);
+      margin-bottom: 30px;
+      font-weight: 400;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+      padding: 0 10px;
+    }
+
+    /* Selection buttons */
+    .select-section {
+      margin-bottom: 40px;
+    }
+
+    .select-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 25px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .payee-btn {
+      position: relative;
+      padding: clamp(16px, 2vw, 20px) clamp(30px, 3vw, 40px);
+      border: none;
+      border-radius: 16px;
+      font-size: clamp(15px, 1.8vw, 18px);
+      font-weight: 600;
+      cursor: pointer;
+      background: var(--primary-gradient);
+      color: white;
+      transition: all 0.3s ease;
+      box-shadow: var(--shadow-md);
+      min-width: clamp(140px, 15vw, 180px);
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .payee-btn:nth-child(2) {
+      background: var(--secondary-gradient);
+      box-shadow: 0 8px 20px rgba(245, 87, 108, 0.3);
+    }
+
+    .payee-btn:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .payee-btn:active {
+      transform: translateY(-2px);
+    }
+
+    /* Home button */
+    .home-btn {
+      display: none;
+      margin: 0 auto 30px;
+      padding: clamp(12px, 1.5vw, 16px) clamp(25px, 3vw, 35px);
+      border: none;
+      border-radius: 16px;
+      background: var(--primary-gradient);
+      color: white;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: var(--shadow-sm);
+      font-size: clamp(14px, 1.6vw, 16px);
+    }
+
+    .home-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-md);
+    }
+
+    /* Payment card */
+    .card {
+      display: none;
+      background: var(--card-bg);
+      border-radius: 24px;
+      padding: clamp(30px, 4vw, 50px) clamp(20px, 3vw, 40px);
+      box-shadow: var(--shadow-lg);
+      animation: fadeUp 0.8s ease forwards;
+      border: 1px solid rgba(255, 255, 255, 0.9);
+      position: relative;
+      overflow: hidden;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 6px;
+      background: var(--primary-gradient);
+    }
+
+    .payee-header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 15px;
+      margin-bottom: clamp(25px, 3vw, 35px);
+      flex-wrap: wrap;
+    }
+
+    .avatar {
+      width: clamp(50px, 6vw, 70px);
+      height: clamp(50px, 6vw, 70px);
+      border-radius: 50%;
+      background: var(--primary-gradient);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: clamp(20px, 2.5vw, 28px);
+      color: white;
+      font-weight: 600;
+      box-shadow: var(--shadow-md);
+      flex-shrink: 0;
+    }
+
+    #venkatesh .avatar {
+      background: var(--secondary-gradient);
+    }
+
+    .name {
+      font-size: clamp(22px, 3vw, 32px);
+      font-weight: 700;
+      color: var(--text-dark);
+      line-height: 1.2;
+    }
+
+    .qr-container {
+      background: white;
+      padding: clamp(15px, 2vw, 25px);
+      border-radius: 20px;
+      display: inline-block;
+      animation: zoomIn 0.6s ease forwards;
+      box-shadow: var(--shadow-md);
+      margin-bottom: clamp(25px, 3vw, 35px);
+      position: relative;
+      border: 1px solid #e2e8f0;
+      width: 100%;
+      max-width: 400px;
+    }
+
+    .qr-label {
+      display: block;
+      font-size: clamp(14px, 1.8vw, 18px);
+      color: var(--accent-color);
+      font-weight: 600;
+      margin-bottom: clamp(15px, 2vw, 20px);
+      text-align: center;
+    }
+
+    .qr-box {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .qr-box img {
+      width: clamp(160px, 25vw, 250px);
+      height: clamp(160px, 25vw, 250px);
+      display: block;
+      border-radius: 10px;
+    }
+
+    .payment-info {
+      background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+      border-radius: 18px;
+      padding: clamp(20px, 3vw, 30px);
+      margin-bottom: 20px;
+      text-align: left;
+      border-left: 4px solid var(--accent-color);
+    }
+
+    .payment-info h3 {
+      font-size: clamp(16px, 2vw, 20px);
+      margin-bottom: clamp(15px, 2vw, 20px);
+      color: var(--accent-color);
+      font-weight: 600;
+    }
+
+    .payment-info ul {
+      list-style: none;
+      padding-left: 0;
+    }
+
+    .payment-info li {
+      margin-bottom: clamp(10px, 1.5vw, 14px);
+      display: flex;
+      align-items: center;
+      gap: clamp(10px, 1.5vw, 15px);
+      color: var(--text-dark);
+      font-size: clamp(14px, 1.6vw, 16px);
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .payment-info li:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+    }
+
+    .payment-info li i {
+      color: var(--accent-color);
+      font-size: clamp(14px, 1.6vw, 16px);
+      width: 24px;
+      text-align: center;
+      flex-shrink: 0;
+    }
+
+    .warning {
+      background: linear-gradient(135deg, rgba(237, 137, 54, 0.05) 0%, rgba(245, 87, 108, 0.05) 100%);
+      border-radius: 18px;
+      padding: clamp(20px, 3vw, 30px);
+      margin-top: clamp(20px, 3vw, 30px);
+      border-left: 4px solid var(--warning-color);
+      text-align: left;
+    }
+
+    .warning h4 {
+      font-size: clamp(15px, 1.8vw, 18px);
+      margin-bottom: clamp(10px, 1.5vw, 15px);
+      color: var(--warning-color);
+      font-weight: 600;
+    }
+
+    .warning p {
+      color: var(--text-muted);
+      font-size: clamp(13px, 1.5vw, 15px);
+      line-height: 1.6;
+    }
+
+    /* Animations */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes zoomIn {
+      from { opacity: 0; transform: scale(0.7); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    /* Desktop specific optimizations */
+    @media (min-width: 768px) {
+      .container {
+        padding: 30px;
+      }
+      
+      .card {
+        padding: 50px 60px;
+      }
+      
+      .payee-btn {
+        min-width: 200px;
+        padding: 20px 40px;
+      }
+      
+      .qr-container {
+        padding: 25px;
+      }
+    }
+
+    /* Mobile specific optimizations */
+    @media (max-width: 480px) {
+      body {
+        padding: 10px;
+      }
+      
+      .container {
+        padding: 15px;
+      }
+      
+      .select-buttons {
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+      }
+      
+      .payee-btn {
+        width: 100%;
+        max-width: 280px;
+      }
+      
+      .card {
+        padding: 25px 20px;
+        border-radius: 20px;
+      }
+      
+      .payment-info, .warning {
+        padding: 20px;
+        border-radius: 16px;
+      }
+      
+      .qr-container {
+        padding: 20px;
+        border-radius: 16px;
+      }
+      
+      .payee-header {
+        gap: 12px;
+      }
+    }
+
+    /* Large desktop screens */
+    @media (min-width: 1200px) {
+      .container {
+        max-width: 1200px;
+      }
+      
+      .card {
+        max-width: 900px;
+        padding: 60px 70px;
+      }
+    }
+
+    /* Prevent text from being too small on very small screens */
+    @media (max-width: 350px) {
+      h1 {
+        font-size: 22px;
+      }
+      
+      .name {
+        font-size: 20px;
+      }
+      
+      .payee-btn {
+        padding: 14px 25px;
+        font-size: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="logo-section">
+      <i class="fas fa-qrcode logo-icon"></i>
+      <h1>UPI Payment Portal</h1>
+    </div>
+    
+    <p class="subtitle">Secure digital payments with RuPay Credit Cards</p>
+
+    <div class="select-section">
+      <h2 id="title">Select recipient to pay</h2>
+      
+      <div class="select-buttons" id="buttons">
+        <button class="payee-btn" onclick="selectPayee('arun')">
+          <i class="fas fa-user-circle"></i> Arun
+        </button>
+        <button class="payee-btn" onclick="selectPayee('venkatesh')">
+          <i class="fas fa-user-circle"></i> Venkatesh
+        </button>
+      </div>
+    </div>
+
+    <button class="home-btn" onclick="goHome()">
+      <i class="fas fa-arrow-left"></i> Back to Selection
+    </button>
+
+    <!-- Arun Card -->
+    <div class="card" id="arun">
+      <div class="payee-header">
+        <div class="avatar">A</div>
+        <div class="name">Arun</div>
+      </div>
+      
+      <div class="qr-container">
+        <div class="qr-label">Scan QR Code to Pay</div>
+        <div class="qr-box">
+          <img src="arun.png" alt="Arun's UPI QR Code" />
+        </div>
+      </div>
+      
+      <div class="payment-info">
+        <h3>Payment Details</h3>
+        <ul>
+          <li><i class="fas fa-check-circle"></i> All RuPay credit cards accepted</li>
+          <li><i class="fas fa-clock"></i> Oneday Settlement</li>
+          <li><i class="fas fa-wallet"></i> No convenience fee up to ₹2,000</li>
+        </ul>
+      </div>
+      
+      <div class="warning">
+        <h4>Important Notice</h4>
+        <p>To avoid transaction charges, please do not pay more than ₹2,000 in a single transaction. For larger amounts, please contact the recipient directly.</p>
+      </div>
+    </div>
+
+    <!-- Venkatesh Card -->
+    <div class="card" id="venkatesh">
+      <div class="payee-header">
+        <div class="avatar">V</div>
+        <div class="name">Venkatesh</div>
+      </div>
+      
+      <div class="qr-container">
+        <div class="qr-label">Scan QR Code to Pay</div>
+        <div class="qr-box">
+          <img src="vengatesh.png" alt="Venkatesh's UPI QR Code" />
+        </div>
+      </div>
+      
+      <div class="payment-info">
+        <h3>Payment Details</h3>
+        <ul>
+          <li><i class="fas fa-check-circle"></i> All RuPay credit cards accepted</li>
+          <li><i class="fas fa-clock"></i> Oneday Settlement</li>
+          <li><i class="fas fa-wallet"></i> No convenience fee up to ₹2,000</li>
+        </ul>
+      </div>
+      
+      <div class="warning">
+        <h4>Important Notice</h4>
+        <p>To avoid transaction charges, please do not pay more than ₹2,000 in a single transaction. For larger amounts, please contact the recipient directly.</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function selectPayee(name) {
+      document.getElementById('buttons').style.display = 'none';
+      document.getElementById('title').style.display = 'none';
+      document.getElementById('arun').style.display = 'none';
+      document.getElementById('venkatesh').style.display = 'none';
+      document.querySelector('.home-btn').style.display = 'block';
+      document.querySelector('.subtitle').style.display = 'none';
+      document.getElementById(name).style.display = 'block';
+    }
+
+    function goHome() {
+      document.getElementById('title').style.display = 'block';
+      document.getElementById('buttons').style.display = 'flex';
+      document.getElementById('arun').style.display = 'none';
+      document.getElementById('venkatesh').style.display = 'none';
+      document.querySelector('.home-btn').style.display = 'none';
+      document.querySelector('.subtitle').style.display = 'block';
+    }
+  </script>
+</body>
+</html>
