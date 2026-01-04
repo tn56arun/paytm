@@ -789,43 +789,84 @@
       // Format amount to 2 decimal places
       const formattedAmount = amount.toFixed(2);
       
-      // Create UPI deep link with all parameters
-      // Using the exact format from the QR codes
+      // Create UPI deep link with correct format
+      // FIXED: Using proper UPI format that works with most UPI apps
       let upiLink = '';
       
       if (payee === 'arun') {
-        // Arun's QR code format
-        upiLink = `upi://pay?pa=paytmqr2810050501013ev9oj7fbtt6@paytm&pn=Paytm%20Merchant&paytmqr=2810050501013EV9OJ7FBTT6&tn=Verified%20Paytm%20Merchant&am=${formattedAmount}&cu=INR`;
+        // Arun's UPI link - simplified format
+        upiLink = `upi://pay?pa=paytmqr2810050501013ev9oj7fbtt6@paytm&pn=Arun&am=${formattedAmount}&cu=INR&tn=Payment%20to%20Arun`;
       } else if (payee === 'venkatesh') {
-        // Venkatesh's QR code format
-        upiLink = `upi://pay?pa=paytmqr5jlpe6@ptys&pn=Paytm&tn=Verified%20Paytm%20Account&am=${formattedAmount}&cu=INR`;
+        // Venkatesh's UPI link - simplified format
+        upiLink = `upi://pay?pa=paytmqr5jlpe6@ptys&pn=Venkatesh&am=${formattedAmount}&cu=INR&tn=Payment%20to%20Venkatesh`;
       }
       
       // Store the amount in localStorage for fallback
       localStorage.setItem('lastPaymentAmount', formattedAmount);
       localStorage.setItem('lastPaymentPayee', payee);
       
-      // Open UPI app
-      window.location.href = upiLink;
+      // Try multiple approaches to open UPI app
+      tryMultipleApproaches(upiLink, payee, formattedAmount);
+    }
+
+    function tryMultipleApproaches(upiLink, payee, amount) {
+      const info = upiInfo[payee];
       
-      // Fallback: If UPI app doesn't open, show instructions
+      // Approach 1: Standard UPI deep link
+      const iframe = document.createElement('iframe');
+      iframe.style.display = 'none';
+      iframe.src = upiLink;
+      document.body.appendChild(iframe);
+      
+      // Approach 2: Try with different timeout
       setTimeout(() => {
         if (document.hasFocus()) {
+          // Approach 3: Fallback - user manual instructions
           const fallbackMessage = `
 Payment Details:
 ----------------
 Recipient: ${payee.charAt(0).toUpperCase() + payee.slice(1)}
 UPI ID: ${info.upiId}
-Amount: ₹${formattedAmount}
+Amount: ₹${amount}
 
-Please open your UPI app and send ₹${formattedAmount} to:
-${info.upiId}
+Instructions:
+1. Open your UPI app (Google Pay, PhonePe, Paytm, etc.)
+2. Tap on "Send Money" or "Pay"
+3. Enter this UPI ID: ${info.upiId}
+4. Enter amount: ₹${amount}
+5. Complete the payment
 
 Note: ${info.note}
 `;
-          alert(fallbackMessage);
+          const proceed = confirm(fallbackMessage + "\n\nClick OK to try opening UPI app again, or Cancel to copy UPI ID manually.");
+          
+          if (proceed) {
+            // Try one more time with a different approach
+            window.location.href = `intent://${upiLink.replace('upi://', '')}#Intent;scheme=upi;package=com.google.android.apps.nbu.paisa.user;end`;
+            
+            setTimeout(() => {
+              if (document.hasFocus()) {
+                // Final fallback - just show the details
+                alert(`Please manually enter this UPI ID in your UPI app:\n\n${info.upiId}\n\nAmount: ₹${amount}`);
+              }
+            }, 1000);
+          } else {
+            // Copy to clipboard option
+            navigator.clipboard.writeText(info.upiId).then(() => {
+              alert(`UPI ID copied to clipboard: ${info.upiId}\n\nPlease paste it in your UPI app and enter amount: ₹${amount}`);
+            }).catch(() => {
+              alert(`UPI ID: ${info.upiId}\n\nPlease manually enter this in your UPI app and enter amount: ₹${amount}`);
+            });
+          }
         }
-      }, 500);
+      }, 1000);
+      
+      // Remove iframe after 5 seconds
+      setTimeout(() => {
+        if (iframe.parentNode) {
+          iframe.parentNode.removeChild(iframe);
+        }
+      }, 5000);
     }
 
     // Add event listeners for amount validation on input
