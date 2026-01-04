@@ -18,6 +18,7 @@
       --text-muted: #718096;
       --success-color: #48bb78;
       --warning-color: #ed8936;
+      --error-color: #f56565;
       --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.05);
       --shadow-md: 0 8px 25px rgba(0, 0, 0, 0.1);
       --shadow-lg: 0 15px 35px rgba(0, 0, 0, 0.15);
@@ -250,6 +251,118 @@
       border-radius: 10px;
     }
 
+    /* Amount Input Section */
+    .amount-section {
+      margin: clamp(25px, 3vw, 35px) 0;
+      background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+      border-radius: 18px;
+      padding: clamp(20px, 3vw, 30px);
+      text-align: center;
+      max-width: 400px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .amount-label {
+      display: block;
+      font-size: clamp(14px, 1.8vw, 18px);
+      color: var(--accent-color);
+      font-weight: 600;
+      margin-bottom: clamp(15px, 2vw, 20px);
+      text-align: center;
+    }
+
+    .amount-input-wrapper {
+      position: relative;
+      display: inline-block;
+      width: 100%;
+      max-width: 250px;
+    }
+
+    .currency-symbol {
+      position: absolute;
+      left: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: clamp(16px, 2vw, 20px);
+      font-weight: 600;
+      color: var(--accent-color);
+      z-index: 1;
+    }
+
+    .amount-input {
+      width: 100%;
+      padding: clamp(14px, 2vw, 18px) 20px clamp(14px, 2vw, 18px) 50px;
+      border: 2px solid #e2e8f0;
+      border-radius: 14px;
+      font-size: clamp(16px, 2vw, 20px);
+      font-weight: 600;
+      text-align: center;
+      background: white;
+      color: var(--text-dark);
+      transition: all 0.3s ease;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .amount-input:focus {
+      outline: none;
+      border-color: var(--accent-color);
+      box-shadow: 0 0 0 3px rgba(118, 75, 162, 0.1);
+    }
+
+    .amount-input.error {
+      border-color: var(--error-color);
+      background-color: rgba(245, 101, 101, 0.05);
+    }
+
+    .amount-error {
+      color: var(--error-color);
+      font-size: clamp(12px, 1.4vw, 14px);
+      margin-top: 10px;
+      min-height: 20px;
+      display: none;
+    }
+
+    .amount-error.show {
+      display: block;
+    }
+
+    /* Pay Button - MOVED HIGHER */
+    .pay-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin: 0 auto clamp(30px, 4vw, 40px) auto; /* Increased bottom margin for spacing */
+      padding: clamp(16px, 2vw, 20px) clamp(35px, 4vw, 50px);
+      border: none;
+      border-radius: 16px;
+      background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
+      color: white;
+      font-size: clamp(16px, 2vw, 20px);
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: var(--shadow-md);
+      min-width: 220px;
+    }
+
+    .pay-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .pay-btn:active {
+      transform: translateY(-1px);
+    }
+
+    .pay-btn:disabled {
+      background: linear-gradient(135deg, #cbd5e1 0%, #94a3b8 100%);
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: var(--shadow-sm);
+    }
+
     .payment-info {
       background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
       border-radius: 18px;
@@ -346,6 +459,15 @@
       .qr-container {
         padding: 25px;
       }
+      
+      .amount-section {
+        padding: 30px;
+      }
+      
+      /* Adjust button position on desktop */
+      .pay-btn {
+        margin-bottom: 35px;
+      }
     }
 
     /* Mobile specific optimizations */
@@ -387,6 +509,18 @@
       .payee-header {
         gap: 12px;
       }
+      
+      .amount-section {
+        padding: 20px;
+        border-radius: 16px;
+      }
+      
+      .pay-btn {
+        min-width: 200px;
+        width: 100%;
+        max-width: 250px;
+        margin-bottom: 25px;
+      }
     }
 
     /* Large desktop screens */
@@ -398,6 +532,10 @@
       .card {
         max-width: 900px;
         padding: 60px 70px;
+      }
+      
+      .pay-btn {
+        margin-bottom: 40px;
       }
     }
 
@@ -414,6 +552,21 @@
       .payee-btn {
         padding: 14px 25px;
         font-size: 14px;
+      }
+      
+      .amount-input {
+        padding-left: 45px;
+        font-size: 16px;
+      }
+      
+      .currency-symbol {
+        left: 15px;
+      }
+      
+      .pay-btn {
+        min-width: 180px;
+        padding: 14px 30px;
+        font-size: 16px;
       }
     }
   </style>
@@ -458,6 +611,27 @@
         </div>
       </div>
       
+      <div class="amount-section">
+        <div class="amount-label">Enter Payment Amount</div>
+        <div class="amount-input-wrapper">
+          <span class="currency-symbol">₹</span>
+          <input type="number" 
+                 class="amount-input" 
+                 id="amount-arun" 
+                 min="0" 
+                 max="2000" 
+                 step="0.01" 
+                 value="2000" 
+                 placeholder="Enter amount">
+        </div>
+        <div class="amount-error" id="error-arun"></div>
+      </div>
+      
+      <!-- Pay Button - NOW POSITIONED CLOSER TO PAYMENT DETAILS -->
+      <button class="pay-btn" onclick="payViaUPI('arun')">
+        <i class="fas fa-external-link-alt"></i> Pay via UPI
+      </button>
+      
       <div class="payment-info">
         <h3>Payment Details</h3>
         <ul>
@@ -487,6 +661,27 @@
         </div>
       </div>
       
+      <div class="amount-section">
+        <div class="amount-label">Enter Payment Amount</div>
+        <div class="amount-input-wrapper">
+          <span class="currency-symbol">₹</span>
+          <input type="number" 
+                 class="amount-input" 
+                 id="amount-venkatesh" 
+                 min="0" 
+                 max="2000" 
+                 step="0.01" 
+                 value="2000" 
+                 placeholder="Enter amount">
+        </div>
+        <div class="amount-error" id="error-venkatesh"></div>
+      </div>
+      
+      <!-- Pay Button - NOW POSITIONED CLOSER TO PAYMENT DETAILS -->
+      <button class="pay-btn" onclick="payViaUPI('venkatesh')">
+        <i class="fas fa-external-link-alt"></i> Pay via UPI
+      </button>
+      
       <div class="payment-info">
         <h3>Payment Details</h3>
         <ul>
@@ -504,7 +699,26 @@
   </div>
 
   <script>
+    // UPI Information extracted from QR codes
+    const upiInfo = {
+      arun: {
+        upiId: 'paytmqr2810050501013ev9oj7fbtt6@paytm',
+        baseLink: 'upi://pay?pa=paytmqr2810050501013ev9oj7fbtt6@paytm',
+        payeeName: 'Paytm Merchant',
+        note: 'Verified Paytm Merchant'
+      },
+      venkatesh: {
+        upiId: 'paytmqr5jlpe6@ptys',
+        baseLink: 'upi://pay?pa=paytmqr5jlpe6@ptys',
+        payeeName: 'Paytm',
+        note: 'Verified Paytm Account'
+      }
+    };
+
+    let currentPayee = '';
+
     function selectPayee(name) {
+      currentPayee = name;
       document.getElementById('buttons').style.display = 'none';
       document.getElementById('title').style.display = 'none';
       document.getElementById('arun').style.display = 'none';
@@ -512,9 +726,13 @@
       document.querySelector('.home-btn').style.display = 'block';
       document.querySelector('.subtitle').style.display = 'none';
       document.getElementById(name).style.display = 'block';
+      
+      // Validate amount when switching to a payee
+      validateAmount(name);
     }
 
     function goHome() {
+      currentPayee = '';
       document.getElementById('title').style.display = 'block';
       document.getElementById('buttons').style.display = 'flex';
       document.getElementById('arun').style.display = 'none';
@@ -522,6 +740,127 @@
       document.querySelector('.home-btn').style.display = 'none';
       document.querySelector('.subtitle').style.display = 'block';
     }
+
+    function validateAmount(payee) {
+      const amountInput = document.getElementById(`amount-${payee}`);
+      const errorElement = document.getElementById(`error-${payee}`);
+      const amount = parseFloat(amountInput.value);
+      
+      // Reset error
+      errorElement.classList.remove('show');
+      amountInput.classList.remove('error');
+      
+      // Check if amount is valid
+      if (isNaN(amount) || amount < 0) {
+        errorElement.textContent = 'Please enter a valid amount';
+        errorElement.classList.add('show');
+        amountInput.classList.add('error');
+        return false;
+      }
+      
+      // Check if amount exceeds maximum
+      if (amount > 2000) {
+        errorElement.textContent = 'Amount cannot exceed ₹2,000';
+        errorElement.classList.add('show');
+        amountInput.classList.add('error');
+        return false;
+      }
+      
+      return true;
+    }
+
+    function payViaUPI(payee) {
+      // Validate amount first
+      if (!validateAmount(payee)) {
+        return;
+      }
+      
+      const amountInput = document.getElementById(`amount-${payee}`);
+      const amount = parseFloat(amountInput.value);
+      
+      // Get UPI information for the selected payee
+      const info = upiInfo[payee];
+      
+      if (!info) {
+        alert('UPI information not available for this recipient.');
+        return;
+      }
+      
+      // Format amount to 2 decimal places
+      const formattedAmount = amount.toFixed(2);
+      
+      // Create UPI deep link with all parameters
+      // Using the exact format from the QR codes
+      let upiLink = '';
+      
+      if (payee === 'arun') {
+        // Arun's QR code format
+        upiLink = `upi://pay?pa=paytmqr2810050501013ev9oj7fbtt6@paytm&pn=Paytm%20Merchant&paytmqr=2810050501013EV9OJ7FBTT6&tn=Verified%20Paytm%20Merchant&am=${formattedAmount}&cu=INR`;
+      } else if (payee === 'venkatesh') {
+        // Venkatesh's QR code format
+        upiLink = `upi://pay?pa=paytmqr5jlpe6@ptys&pn=Paytm&tn=Verified%20Paytm%20Account&am=${formattedAmount}&cu=INR`;
+      }
+      
+      // Store the amount in localStorage for fallback
+      localStorage.setItem('lastPaymentAmount', formattedAmount);
+      localStorage.setItem('lastPaymentPayee', payee);
+      
+      // Open UPI app
+      window.location.href = upiLink;
+      
+      // Fallback: If UPI app doesn't open, show instructions
+      setTimeout(() => {
+        if (document.hasFocus()) {
+          const fallbackMessage = `
+Payment Details:
+----------------
+Recipient: ${payee.charAt(0).toUpperCase() + payee.slice(1)}
+UPI ID: ${info.upiId}
+Amount: ₹${formattedAmount}
+
+Please open your UPI app and send ₹${formattedAmount} to:
+${info.upiId}
+
+Note: ${info.note}
+`;
+          alert(fallbackMessage);
+        }
+      }, 500);
+    }
+
+    // Add event listeners for amount validation on input
+    document.addEventListener('DOMContentLoaded', function() {
+      // Add input event listeners for amount validation
+      document.getElementById('amount-arun').addEventListener('input', function() {
+        validateAmount('arun');
+      });
+      
+      document.getElementById('amount-venkatesh').addEventListener('input', function() {
+        validateAmount('venkatesh');
+      });
+      
+      // Add blur event listeners for formatting
+      document.getElementById('amount-arun').addEventListener('blur', function() {
+        const value = parseFloat(this.value);
+        if (!isNaN(value) && value >= 0) {
+          this.value = value.toFixed(2);
+        }
+      });
+      
+      document.getElementById('amount-venkatesh').addEventListener('blur', function() {
+        const value = parseFloat(this.value);
+        if (!isNaN(value) && value >= 0) {
+          this.value = value.toFixed(2);
+        }
+      });
+      
+      // Add keyboard shortcut for amount input
+      document.addEventListener('keydown', function(e) {
+        if (currentPayee && e.key === 'Enter' && (e.target.type !== 'number' || e.target.value)) {
+          payViaUPI(currentPayee);
+        }
+      });
+    });
   </script>
 </body>
 </html>
